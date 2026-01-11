@@ -1,0 +1,44 @@
+# Dub build artifacts
+.dub/
+dub.selections.json
+*.o
+*.obj
+*.lib
+*.a
+*.so
+*.dll
+*.dylib
+
+# Executable output
+quantum_d
+quantum_d.exe
+*.exe
+
+# Generated files
+teleport.qasm
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Coverage reports
+*.lst
+-cov/

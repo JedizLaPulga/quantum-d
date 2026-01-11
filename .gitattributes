@@ -1,0 +1,32 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# D source files
+*.d text diff=dlang
+*.di text diff=dlang
+
+# Documentation
+*.md text diff=markdown
+*.txt text
+
+# Configuration files
+*.json text
+*.yml text
+*.yaml text
+
+# Shell scripts
+*.sh text eol=lf
+
+# Windows batch files
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+*.a binary
+*.lib binary
+*.obj binary
+*.o binary
