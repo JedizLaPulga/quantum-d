@@ -78,8 +78,3 @@ struct QRegister(ulong N) {
         }
     }
 }
-
-import quantum.qasm;
-// At the end of QRegister struct in register.d
-
-
