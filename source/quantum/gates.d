@@ -1,279 +1,199 @@
 module quantum.gates;
 
 /++
-$(H2 Quantum Gates Module)
+Quantum Gates Module
 
 Standard quantum gates for quantum circuit simulation.
-
-This module provides all common single-qubit, two-qubit, and three-qubit gates
-used in quantum computing.
-
-$(H3 Single-Qubit Gates)
-$(UL
-    $(LI Pauli gates: X, Y, Z)
-    $(LI Hadamard: H)
-    $(LI Phase gates: S, T, S†, T†)
-    $(LI Rotation gates: Rx(θ), Ry(θ), Rz(θ))
-)
-
-$(H3 Multi-Qubit Gates)
-$(UL
-    $(LI CNOT/CX: Controlled-NOT)
-    $(LI CY, CZ: Controlled-Y, Controlled-Z)
-    $(LI SWAP: Swap two qubits)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}    }        ];            [C(0.5L, 0.5L), C(0.5L, 0.5L)]            [C(0.5L, 0.5L), C(-0.5L, -0.5L)],        return [    static C[2][2] SqrtY() {    +/    √Y gate (square root of Y).    /++    }        ];            [C(0.5L, -0.5L), C(0.5L, 0.5L)]            [C(0.5L, 0.5L), C(0.5L, -0.5L)],        return [    static C[2][2] SqrtX() {    +/    Matrix: (1+i)/2 * [1 -i; -i 1] (up to global phase)        Applying twice gives X gate.        √X gate (square root of X).    /++    // =========================================================================    // SQRT GATES    // =========================================================================    ];        [C(0), C(1)]        [C(1), C(0)],    static immutable C[2][2] I = [    +/    Matrix: [1 0; 0 1]        Identity gate (no operation).    /++    // =========================================================================    // IDENTITY    // =========================================================================    }        ];            [C(0), C(cos(phi), sin(phi))]            [C(1), C(0)],        return [    static C[2][2] P(real phi) {    +/        phi = Phase angle in radians    Params:        Note: S = P(π/2), T = P(π/4), Z = P(π)        Matrix: [1 0; 0 e^(iφ)]        P(φ)|0⟩ = |0⟩, P(φ)|1⟩ = e^(iφ)|1⟩        General phase gate P(φ).    /++    }        ];            [C(0), C(c, s)]            [C(c, -s), C(0)],        return [        real s = sin(theta / 2.0L);        real c = cos(theta / 2.0L);    static C[2][2] Rz(real theta) {    +/        theta = Rotation angle in radians    Params:        Matrix: [e^(-iθ/2) 0; 0 e^(iθ/2)]        Rz(θ) = e^(-iθ/2)|0⟩⟨0| + e^(iθ/2)|1⟩⟨1|        Rz gate - rotation around Z-axis by angle θ.    /++    }        ];            [C(s), C(c)]            [C(c), C(-s)],        return [        real s = sin(theta / 2.0L);        real c = cos(theta / 2.0L);    static C[2][2] Ry(real theta) {    +/        theta = Rotation angle in radians    Params:        Matrix: [cos(θ/2) -sin(θ/2); sin(θ/2) cos(θ/2)]        Ry(θ) = cos(θ/2)I - i·sin(θ/2)Y        Ry gate - rotation around Y-axis by angle θ.    /++    }        ];            [C(0, -s), C(c)]            [C(c), C(0, -s)],        return [        real s = sin(theta / 2.0L);        real c = cos(theta / 2.0L);    static C[2][2] Rx(real theta) {    +/        theta = Rotation angle in radians    Params:        Matrix: [cos(θ/2) -i·sin(θ/2); -i·sin(θ/2) cos(θ/2)]        Rx(θ) = cos(θ/2)I - i·sin(θ/2)X        Rx gate - rotation around X-axis by angle θ.    /++    // =========================================================================    // ROTATION GATES    // =========================================================================    }        ];            [C(0), C(cos(angle), sin(angle))]            [C(1), C(0)],        return [        immutable real angle = -PI / 4.0L;    static C[2][2] Tdag() {    +/    Matrix: [1 0; 0 e^(-iπ/4)]        T† gate (T-dagger, inverse of T).    /++    }        ];            [C(0), C(cos(angle), sin(angle))]            [C(1), C(0)],        return [        immutable real angle = PI / 4.0L;    static C[2][2] T() {    +/    Matrix: [1 0; 0 e^(iπ/4)]        T|0⟩ = |0⟩, T|1⟩ = e^(iπ/4)|1⟩        T gate (√S gate, π/8 gate).    /++    ];        [C(0), C(0, -1)]        [C(1), C(0)],    static immutable C[2][2] Sdag = [    +/    Matrix: [1 0; 0 -i]        S† gate (S-dagger, inverse of S).    /++    ];        [C(0), C(0, 1)]        [C(1), C(0)],    static immutable C[2][2] S = [    +/    Matrix: [1 0; 0 i]        S|0⟩ = |0⟩, S|1⟩ = i|1⟩        S gate (√Z gate, phase gate).    /++    // =========================================================================    // PHASE GATES    // =========================================================================    ];        [C(SQRT2_INV), C(-SQRT2_INV)]        [C(SQRT2_INV), C(SQRT2_INV)],    static immutable C[2][2] H = [    +/    Matrix: [1 1; 1 -1] / √2        H|1⟩ = (|0⟩ - |1⟩)/√2    H|0⟩ = (|0⟩ + |1⟩)/√2        Hadamard gate - creates superposition.    /++    // =========================================================================    // HADAMARD GATE    // =========================================================================    ];        [C(0), C(-1)]        [C(1), C(0)],    static immutable C[2][2] Z = [    +/    Matrix: [1 0; 0 -1]        Z|0⟩ = |0⟩, Z|1⟩ = -|1⟩        Pauli-Z gate (phase-flip).    /++    ];        [C(0, 1), C(0)]        [C(0), C(0, -1)],    static immutable C[2][2] Y = [    +/    Matrix: [0 -i; i 0]        Y|0⟩ = i|1⟩, Y|1⟩ = -i|0⟩        Pauli-Y gate.    /++    ];        [C(1), C(0)]        [C(0), C(1)],    static immutable C[2][2] X = [    +/    Matrix: [0 1; 1 0]        X|0⟩ = |1⟩, X|1⟩ = |0⟩        Pauli-X gate (NOT gate / bit-flip).    /++    // =========================================================================    // PAULI GATES    // =========================================================================    private static immutable real SQRT2_INV = 1.0L / sqrt(2.0L);    /// 1/√2 constant used in many gatesstruct Gates {/// Collection of standard quantum gates as 2x2 unitary matricesimport std.math : sqrt, cos, sin, PI;import quantum.common : C;module quantum.gates;+/---reg.applyGate(0, Gates.Rx(PI/4)); // Rotation around Xreg.applyGate(1, Gates.T);       // T gate on qubit 1reg.applyGate(0, Gates.H);       // Hadamard on qubit 0auto reg = QRegister!2([C(1), C(0), C(0), C(0)]);---Example:)    $(LI Toffoli/CCNOT: Controlled-controlled-NOT)
-    $(LI Fredkin/CSWAP: Controlled-SWAP)
+This module provides all common single-qubit gates as 2x2 unitary matrices.
++/
+
+import quantum.common : C;
+import std.math : sqrt, cos, sin, PI;
+
+/// Collection of standard quantum gates as 2x2 unitary matrices
+struct Gates {
+    /// 1/sqrt(2) constant used in many gates
+    private static immutable real SQRT2_INV = 1.0L / sqrt(2.0L);
+
+    // =========================================================================
+    // PAULI GATES
+    // =========================================================================
+
+    /++
+    Pauli-X gate (NOT gate / bit-flip).
+    Matrix: [0 1; 1 0]
+    +/
+    static immutable C[2][2] X = [
+        [C(0), C(1)],
+        [C(1), C(0)]
+    ];
+
+    /++
+    Pauli-Y gate.
+    Matrix: [0 -i; i 0]
+    +/
+    static immutable C[2][2] Y = [
+        [C(0), C(0, -1)],
+        [C(0, 1), C(0)]
+    ];
+
+    /++
+    Pauli-Z gate (phase-flip).
+    Matrix: [1 0; 0 -1]
+    +/
+    static immutable C[2][2] Z = [
+        [C(1), C(0)],
+        [C(0), C(-1)]
+    ];
+
+    // =========================================================================
+    // HADAMARD GATE
+    // =========================================================================
+
+    /++
+    Hadamard gate - creates superposition.
+    Matrix: [1 1; 1 -1] / sqrt(2)
+    +/
+    static immutable C[2][2] H = [
+        [C(SQRT2_INV), C(SQRT2_INV)],
+        [C(SQRT2_INV), C(-SQRT2_INV)]
+    ];
+
+    // =========================================================================
+    // PHASE GATES
+    // =========================================================================
+
+    /++
+    S gate (sqrt(Z) gate, phase gate).
+    Matrix: [1 0; 0 i]
+    +/
+    static immutable C[2][2] S = [
+        [C(1), C(0)],
+        [C(0), C(0, 1)]
+    ];
+
+    /++
+    S-dagger gate (inverse of S).
+    Matrix: [1 0; 0 -i]
+    +/
+    static immutable C[2][2] Sdag = [
+        [C(1), C(0)],
+        [C(0), C(0, -1)]
+    ];
+
+    /++
+    T gate (sqrt(S) gate, pi/8 gate).
+    Matrix: [1 0; 0 e^(i*pi/4)]
+    +/
+    static C[2][2] T() {
+        immutable real angle = PI / 4.0L;
+        return [
+            [C(1), C(0)],
+            [C(0), C(cos(angle), sin(angle))]
+        ];
+    }
+
+    /++
+    T-dagger gate (inverse of T).
+    Matrix: [1 0; 0 e^(-i*pi/4)]
+    +/
+    static C[2][2] Tdag() {
+        immutable real angle = -PI / 4.0L;
+        return [
+            [C(1), C(0)],
+            [C(0), C(cos(angle), sin(angle))]
+        ];
+    }
+
+    // =========================================================================
+    // ROTATION GATES
+    // =========================================================================
+
+    /++
+    Rx gate - rotation around X-axis by angle theta.
+    Matrix: [cos(t/2) -i*sin(t/2); -i*sin(t/2) cos(t/2)]
+    +/
+    static C[2][2] Rx(real theta) {
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        return [
+            [C(c), C(0, -s)],
+            [C(0, -s), C(c)]
+        ];
+    }
+
+    /++
+    Ry gate - rotation around Y-axis by angle theta.
+    Matrix: [cos(t/2) -sin(t/2); sin(t/2) cos(t/2)]
+    +/
+    static C[2][2] Ry(real theta) {
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        return [
+            [C(c), C(-s)],
+            [C(s), C(c)]
+        ];
+    }
+
+    /++
+    Rz gate - rotation around Z-axis by angle theta.
+    Matrix: [e^(-i*t/2) 0; 0 e^(i*t/2)]
+    +/
+    static C[2][2] Rz(real theta) {
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        return [
+            [C(c, -s), C(0)],
+            [C(0), C(c, s)]
+        ];
+    }
+
+    /++
+    General phase gate P(phi).
+    Matrix: [1 0; 0 e^(i*phi)]
+    +/
+    static C[2][2] P(real phi) {
+        return [
+            [C(1), C(0)],
+            [C(0), C(cos(phi), sin(phi))]
+        ];
+    }
+
+    // =========================================================================
+    // IDENTITY
+    // =========================================================================
+
+    /++
+    Identity gate (no operation).
+    Matrix: [1 0; 0 1]
+    +/
+    static immutable C[2][2] I = [
+        [C(1), C(0)],
+        [C(0), C(1)]
+    ];
+
+    // =========================================================================
+    // SQRT GATES
+    // =========================================================================
+
+    /++
+    sqrt(X) gate (square root of X).
+    Applying twice gives X gate.
+    +/
+    static C[2][2] SqrtX() {
+        return [
+            [C(0.5L, 0.5L), C(0.5L, -0.5L)],
+            [C(0.5L, -0.5L), C(0.5L, 0.5L)]
+        ];
+    }
+
+    /++
+    sqrt(Y) gate (square root of Y).
+    +/
+    static C[2][2] SqrtY() {
+        return [
+            [C(0.5L, 0.5L), C(-0.5L, -0.5L)],
+            [C(0.5L, 0.5L), C(0.5L, 0.5L)]
+        ];
+    }
+}
