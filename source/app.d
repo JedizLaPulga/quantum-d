@@ -4,6 +4,7 @@ import quantum.qasm;
 import quantum.teleport;
 import quantum.ghz;
 import quantum.gates;
+import quantum.grover;
 import quantum.common : C, absSq;
 import std.math;
 import std.stdio;
@@ -38,6 +39,9 @@ void main()
     total++; if (testToffoliGate()) passed++;
     total++; if (testGatesModule()) passed++;
     
+    // Algorithm tests
+    total++; if (testGroverSearch()) passed++;
+    
     writeln("\n========================================");
     writefln!"  RESULTS: %d/%d tests passed"(passed, total);
     writeln("========================================");
@@ -47,6 +51,12 @@ void main()
     } else {
         writefln!"  %d tests FAILED"(total - passed);
     }
+    
+    writeln("\n\n========================================");
+    writeln("     GROVER'S SEARCH DEMO");
+    writeln("========================================\n");
+    
+    Grover!3.search(5, true);  // Search for 5 in 8 items
     
     writeln("\n\n========================================");
     writeln("     TELEPORTATION DEMO");
@@ -301,5 +311,31 @@ bool testGatesModule() {
     pass = pass && abs(q.prob1 - 1.0L) < 1e-10L;
     
     writefln!"[%s] Gates module: H and Rx(π) work correctly"(pass ? "PASS" : "FAIL");
+    return pass;
+}
+
+// =========================================================================
+// ALGORITHM TESTS
+// =========================================================================
+
+/// Test Grover's search algorithm
+bool testGroverSearch() {
+    // Run Grover's search multiple times to check success rate
+    // For 3 qubits searching for target 5, should succeed ~95%+ of the time
+    enum size_t RUNS = 20;
+    enum size_t TARGET = 5;
+    
+    size_t successes = 0;
+    foreach (_; 0 .. RUNS) {
+        if (Grover!3.search(TARGET, false) == TARGET) {
+            successes++;
+        }
+    }
+    
+    real successRate = cast(real)successes / cast(real)RUNS;
+    bool pass = successRate >= 0.8;  // Should be ~95%, allow some margin
+    
+    writefln!"[%s] Grover's search: %d/%d success rate (%.0f%%, expected >80%%)"(
+        pass ? "PASS" : "FAIL", successes, RUNS, successRate * 100);
     return pass;
 }
