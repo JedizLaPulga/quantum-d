@@ -14,7 +14,7 @@ q.print();                        // Display state
 +/
 module quantum.qubit;
 
-import std.math;
+import std.math : sqrt, cos, sin, PI;
 import std.algorithm : swap;
 import std.exception : enforce;
 
@@ -56,8 +56,28 @@ public struct Qubit {
     /// Returns probability of measuring |1⟩
     real prob1() const pure @safe @nogc nothrow => absSq(beta);
 
+    // =========================================================================
+    // PAULI GATES
+    // =========================================================================
+
     /// Applies Pauli-X (NOT) gate: |0⟩ ↔ |1⟩
     void applyX() pure @safe @nogc nothrow { swap(alpha, beta); }
+
+    /// Applies Pauli-Y gate: Y|0⟩ = i|1⟩, Y|1⟩ = -i|0⟩
+    void applyY() pure @safe @nogc nothrow {
+        C a = alpha, b = beta;
+        alpha = b * C(0, -1);  // -i * beta
+        beta = a * C(0, 1);    // i * alpha
+    }
+
+    /// Applies Pauli-Z gate: Z|0⟩ = |0⟩, Z|1⟩ = -|1⟩
+    void applyZ() pure @safe @nogc nothrow {
+        beta = beta * C(-1);
+    }
+
+    // =========================================================================
+    // HADAMARD
+    // =========================================================================
 
     /++
     Applies Hadamard gate, creating superposition.
@@ -70,6 +90,101 @@ public struct Qubit {
         real s = 1.0L / sqrt(2.0L);
         alpha = (a + b) * s;
         beta  = (a - b) * s;
+    }
+
+    // =========================================================================
+    // PHASE GATES
+    // =========================================================================
+
+    /// Applies S gate (√Z): S|0⟩ = |0⟩, S|1⟩ = i|1⟩
+    void applyS() pure @safe @nogc nothrow {
+        beta = beta * C(0, 1);
+    }
+
+    /// Applies S† gate (inverse of S): S†|1⟩ = -i|1⟩
+    void applySdag() pure @safe @nogc nothrow {
+        beta = beta * C(0, -1);
+    }
+
+    /// Applies T gate (√S, π/8 gate)
+    void applyT() pure @safe @nogc nothrow {
+        immutable real angle = PI / 4.0L;
+        beta = beta * C(cos(angle), sin(angle));
+    }
+
+    /// Applies T† gate (inverse of T)
+    void applyTdag() pure @safe @nogc nothrow {
+        immutable real angle = -PI / 4.0L;
+        beta = beta * C(cos(angle), sin(angle));
+    }
+
+    // =========================================================================
+    // ROTATION GATES
+    // =========================================================================
+
+    /++
+    Applies rotation around X-axis.
+    
+    Params:
+        theta = Rotation angle in radians
+    +/
+    void applyRx(real theta) pure @safe @nogc nothrow {
+        C a = alpha, b = beta;
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        alpha = a * C(c) + b * C(0, -s);
+        beta = a * C(0, -s) + b * C(c);
+    }
+
+    /++
+    Applies rotation around Y-axis.
+    
+    Params:
+        theta = Rotation angle in radians
+    +/
+    void applyRy(real theta) pure @safe @nogc nothrow {
+        C a = alpha, b = beta;
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        alpha = a * C(c) + b * C(-s);
+        beta = a * C(s) + b * C(c);
+    }
+
+    /++
+    Applies rotation around Z-axis.
+    
+    Params:
+        theta = Rotation angle in radians
+    +/
+    void applyRz(real theta) pure @safe @nogc nothrow {
+        real c = cos(theta / 2.0L);
+        real s = sin(theta / 2.0L);
+        alpha = alpha * C(c, -s);
+        beta = beta * C(c, s);
+    }
+
+    /++
+    Applies a general phase gate P(φ).
+    
+    P(φ)|0⟩ = |0⟩, P(φ)|1⟩ = e^(iφ)|1⟩
+    
+    Params:
+        phi = Phase angle in radians
+    +/
+    void applyP(real phi) pure @safe @nogc nothrow {
+        beta = beta * C(cos(phi), sin(phi));
+    }
+
+    /++
+    Applies an arbitrary 2x2 unitary gate.
+    
+    Params:
+        gate = 2x2 unitary matrix
+    +/
+    void applyGate(C[2][2] gate) pure @safe @nogc nothrow {
+        C a = alpha, b = beta;
+        alpha = gate[0][0] * a + gate[0][1] * b;
+        beta = gate[1][0] * a + gate[1][1] * b;
     }
 
     /// Prints the qubit state in Dirac notation

@@ -3,6 +3,7 @@ import quantum.register;
 import quantum.qasm;
 import quantum.teleport;
 import quantum.ghz;
+import quantum.gates;
 import quantum.common : C, absSq;
 import std.math;
 import std.stdio;
@@ -16,6 +17,7 @@ void main()
     int passed = 0;
     int total = 0;
     
+    // Core tests
     total++; if (testQubitNormalization()) passed++;
     total++; if (testHadamardGate()) passed++;
     total++; if (testPauliXGate()) passed++;
@@ -24,6 +26,17 @@ void main()
     total++; if (testGHZState()) passed++;
     total++; if (testMeasurementCollapse()) passed++;
     total++; if (testComplexAmplitudes()) passed++;
+    
+    // New gate tests
+    total++; if (testPauliYGate()) passed++;
+    total++; if (testPauliZGate()) passed++;
+    total++; if (testSGate()) passed++;
+    total++; if (testTGate()) passed++;
+    total++; if (testRotationGates()) passed++;
+    total++; if (testSWAPGate()) passed++;
+    total++; if (testCZGate()) passed++;
+    total++; if (testToffoliGate()) passed++;
+    total++; if (testGatesModule()) passed++;
     
     writeln("\n========================================");
     writefln!"  RESULTS: %d/%d tests passed"(passed, total);
