@@ -3,15 +3,9 @@ module quantum.teleport;
 import quantum.register;
 import quantum.qasm;
 import quantum.qubit;
-
+import quantum.common : C, absSq;
 
 import std.file;
-
-
-
-private real absSq(C z) pure @safe @nogc nothrow {
-    return z.re * z.re + z.im * z.im;
-}
 
 class QuantumTeleport {
     QRegister!3 reg;

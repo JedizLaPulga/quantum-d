@@ -1,16 +1,10 @@
 module quantum.qubit;
 
-
-import std.complex;
 import std.math;
 import std.algorithm : swap;
 import std.exception : enforce;
 
-alias C = Complex!real;
-
-private real absSq(C z) pure @safe @nogc nothrow {
-    return z.re * z.re + z.im * z.im;
-}
+import quantum.common : C, absSq;
 
 public struct Qubit {
     C alpha, beta;
