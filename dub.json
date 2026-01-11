@@ -6,7 +6,7 @@
 	"description": "A quantum Library in D, for simulating quantum effects and results on a classical computer, and be imported via quantum, it has interface with py and can also use py quantum lib",
 	"license": "MIT",
 	"name": "quantum_d",
-	"targetType": "library",
+	"targetType": "executable",
 	"homepage": "https://github.com/jedizlapulga/quantum-d",
     "sourcePaths": ["source"],
 	"importPaths": ["source"],

@@ -29,9 +29,9 @@ public struct Qubit {
     }
 
     void print() const {
-        import  std.stdio:writefln;
+        import std.stdio : writefln;
         
-        writefln!"|ψ⟩ = %.6f|0⟩ + %.6f%+fi|1⟩   (P0=%.6f, P1=%.6f)"(
-            alpha.re, beta.re, beta.im, prob0, prob1);
+        writefln!"|ψ⟩ = (%.6f%+fi)|0⟩ + (%.6f%+fi)|1⟩   (P0=%.6f, P1=%.6f)"(
+            alpha.re, alpha.im, beta.re, beta.im, prob0, prob1);
     }
 }
