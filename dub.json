@@ -2,7 +2,7 @@
 	"authors": [
 		"jedizlapulga"
 	],
-	"copyright": "Copyright © 2025, jedizlapulga",
+	"copyright": "Copyright © 2025-2026, jedizlapulga",
 	"description": "A quantum Library in D, for simulating quantum effects and results on a classical computer, and be imported via quantum, it has interface with py and can also use py quantum lib",
 	"license": "MIT",
 	"name": "quantum_d",
