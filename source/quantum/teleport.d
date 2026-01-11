@@ -52,9 +52,10 @@ class QuantumTeleport {
         bool c1 = tele.reg.measure(1);
         writefln!"\nAlice measures → c0=%d, c1=%d\n"(c0, c1);
 
-        // 3. Bob's corrections
-        if (c1) { tele.reg.applyGate(2, [[C(1), C(0)], [C(0), C(-1)]]); tele.log(GateType.Z, 2); }
-        if (c0) { tele.reg.applyGate(2, [[C(0), C(1)], [C(1), C(0)]]); tele.log(GateType.X, 2); }
+        // 3. Bob's corrections (based on Alice's measurement results)
+        // Standard teleportation: if c1=1, apply X; if c0=1, apply Z
+        if (c1) { tele.reg.applyGate(2, [[C(0), C(1)], [C(1), C(0)]]); tele.log(GateType.X, 2); }
+        if (c0) { tele.reg.applyGate(2, [[C(1), C(0)], [C(0), C(-1)]]); tele.log(GateType.Z, 2); }
 
         // 4. Extract Bob's qubit (3 qubits = 8 basis states)
         enum NUM_STATES = 1 << 3;  // 2^3 = 8
