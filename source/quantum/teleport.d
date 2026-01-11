@@ -106,10 +106,11 @@ class QuantumTeleport {
         lines ~= "measure q[0] -> c[0];";
         lines ~= "measure q[1] -> c[1];";
 
+        // Corrections: c1=1 → X, c0=1 → Z
         int val = (c1 ? 2 : 0) + (c0 ? 1 : 0);
-        if (val == 1) lines ~= "if(c==1) x q[2];";
-        if (val == 2) lines ~= "if(c==2) z q[2];";
-        if (val == 3) lines ~= "if(c==3) x q[2]; z q[2];";
+        if (val == 1) lines ~= "if(c==1) z q[2];";           // c0=1, c1=0: Z
+        if (val == 2) lines ~= "if(c==2) x q[2];";           // c0=0, c1=1: X
+        if (val == 3) lines ~= "if(c==3) x q[2]; z q[2];";   // c0=1, c1=1: XZ
 
         return lines.data.join("\n") ~ "\n";
     }
