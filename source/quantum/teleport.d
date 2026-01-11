@@ -54,11 +54,13 @@ class QuantumTeleport {
         if (c1) { tele.reg.applyGate(2, [[C(1), C(0)], [C(0), C(-1)]]); tele.log(GateType.Z, 2); }
         if (c0) { tele.reg.applyGate(2, [[C(0), C(1)], [C(1), C(0)]]); tele.log(GateType.X, 2); }
 
-        // 4. Extract Bob's qubit
+        // 4. Extract Bob's qubit (3 qubits = 8 basis states)
+        enum NUM_STATES = 1 << 3;  // 2^3 = 8
+        enum QUBIT2_MASK = 1 << 2; // Bit mask for qubit 2
         C bob0 = C(0), bob1 = C(0);
-        foreach (i; 0..8) {
-            if ((i & 4) == 0) bob0 += tele.reg.state[i];
-            else               bob1 += tele.reg.state[i];
+        foreach (i; 0 .. NUM_STATES) {
+            if ((i & QUBIT2_MASK) == 0) bob0 += tele.reg.state[i];
+            else                        bob1 += tele.reg.state[i];
         }
         real n = sqrt(absSq(bob0) + absSq(bob1));
         bob0 /= n; bob1 /= n;

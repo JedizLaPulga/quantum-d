@@ -7,11 +7,17 @@ import std.exception : enforce;
 import quantum.common : C, absSq;
 
 
+private enum : real {
+    PROB_DISPLAY_THRESHOLD = 1e-10L  /// Minimum probability to display in print()
+}
+
 struct QRegister(ulong N) {
-    C[1 << N] state;
+    private enum size_t NUM_STATES = 1 << N;  /// Total number of basis states (2^N)
+    
+    C[NUM_STATES] state;
 
     this(C[] init) {
-        enforce(init.length == (1 << N), "Initial state must have 2^N amplitudes");
+        enforce(init.length == NUM_STATES, "Initial state must have 2^N amplitudes");
         foreach (i, amp; init) state[i] = amp;
         normalize();
     }
@@ -42,8 +48,8 @@ struct QRegister(ulong N) {
     void applyCNOT(size_t control, size_t target) {
         size_t cbit = 1UL << control;
         size_t tbit = 1UL << target;
-        C[1 << N] temp;
-        foreach (i; 0 .. (1 << N)) {
+        C[NUM_STATES] temp;
+        foreach (i; 0 .. NUM_STATES) {
             temp[i] = (i & cbit) ? state[i ^ tbit] : state[i];
         }
         state = temp;
@@ -51,13 +57,13 @@ struct QRegister(ulong N) {
 
     bool measure(size_t qubit) {
         real p0 = 0.0L;
-        foreach (i; 0 .. (1 << N)) {
+        foreach (i; 0 .. NUM_STATES) {
             if (((i >> qubit) & 1) == 0) p0 += prob(i);
         }
         import std.random : uniform01, rndGen;
         bool result = uniform01!real(rndGen) >= p0;  // true = |1⟩, false = |0⟩
 
-        foreach (i; 0 .. (1 << N)) {
+        foreach (i; 0 .. NUM_STATES) {
             if (((i >> qubit) & 1) != (result ? 1 : 0)) {
                 state[i] = C(0.0L);
             }
@@ -67,12 +73,12 @@ struct QRegister(ulong N) {
     }
 
     void print() const {
-        import std.stdio:writeln, writefln;
+        import std.stdio : writeln, writefln;
         
         writeln("State vector:");
-        foreach (i; 0 .. (1 << N)) {
+        foreach (i; 0 .. NUM_STATES) {
             real p = prob(i);
-            if (p > 1e-10L) {
+            if (p > PROB_DISPLAY_THRESHOLD) {
                 writefln!"  |%0*b⟩ → %.6f%+fi  (P=%.6f)"(N, i, state[i].re, state[i].im, p);
             }
         }
