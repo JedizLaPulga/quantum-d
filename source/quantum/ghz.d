@@ -12,10 +12,15 @@ struct GHZState(ulong N) if (N >= 2) {
     static GHZState create() {
         import std.math : sqrt;
         
-        GHZState ghz;
+        // Create initial state array with zeros
+        C[1 << N] init = C(0);
+        
         // |GHZ⟩ = (|00...0⟩ + |11...1⟩) / √2
-        ghz.reg.state[0] = C(1.0L / sqrt(2.0L));           // |00...0⟩
-        ghz.reg.state[(1 << N) - 1] = C(1.0L / sqrt(2.0L)); // |11...1⟩
+        init[0] = C(1.0L / sqrt(2.0L));           // |00...0⟩
+        init[(1 << N) - 1] = C(1.0L / sqrt(2.0L)); // |11...1⟩
+        
+        GHZState ghz;
+        ghz.reg = QRegister!N(init[]);
         return ghz;
     }
 
