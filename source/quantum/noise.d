@@ -46,7 +46,7 @@ struct NoiseModel {
         qubit = Target qubit index
         p = Error probability (0 to 1)
     +/
-    static void applyDepolarizing(N)(ref QRegister!N reg, size_t qubit, real p) {
+    static void applyDepolarizing(ulong N)(ref QRegister!N reg, size_t qubit, real p) {
         if (uniform01!real(rndGen) < p) {
             // Apply random Pauli error
             int error = uniform(0, 3, rndGen);
