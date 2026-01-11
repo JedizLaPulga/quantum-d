@@ -349,3 +349,80 @@ bool testGroverSearch() {
         pass ? "PASS" : "FAIL", successes, RUNS, successRate * 100);
     return pass;
 }
+
+// =========================================================================
+// NOISE MODEL TESTS
+// =========================================================================
+
+/// Test noise models
+bool testNoiseModels() {
+    // Test that depolarizing noise degrades fidelity over many applications
+    enum RUNS = 50;
+    size_t degraded = 0;
+    
+    foreach (_; 0 .. RUNS) {
+        // Create |0> state
+        auto reg = QRegister!1([C(1), C(0)]);
+        
+        // Apply heavy noise
+        foreach (i; 0 .. 10) {
+            NoiseModel.applyDepolarizing(reg, cast(size_t)0, cast(real)0.3);  // 30% error each time
+        }
+        
+        // State should be significantly degraded from pure |0>
+        if (reg.prob(0) < 0.99) degraded++;
+    }
+    
+    // Most runs should show degradation
+    bool pass = degraded > RUNS / 2;
+    writefln!"[%s] Noise models: Depolarizing degraded state in %d/%d runs"(
+        pass ? "PASS" : "FAIL", degraded, RUNS);
+    return pass;
+}
+
+/// Demo noise effects on quantum circuits
+void demoNoiseModels() {
+    writeln("Comparing ideal vs noisy Bell state preparation:\n");
+    
+    // Ideal Bell state
+    auto ideal = QRegister!2([C(1), C(0), C(0), C(0)]);
+    ideal.applyGate(0, Gates.H);
+    ideal.applyCNOT(0, 1);
+    writeln("IDEAL Bell state:");
+    writefln!"  P(00)=%.4f, P(11)=%.4f"(ideal.prob(0), ideal.prob(3));
+    
+    // Noisy Bell state (IBM-like noise)
+    writeln("\nNOISY Bell state (simulating real hardware):");
+    auto config = NoiseConfig.ibmQuantum();
+    
+    size_t[4] counts = [0, 0, 0, 0];
+    enum SHOTS = 100;
+    
+    foreach (_; 0 .. SHOTS) {
+        auto noisy = QRegister!2([C(1), C(0), C(0), C(0)]);
+        
+        // Noisy H gate
+        C[2][2] hGate = Gates.H;
+        NoiseModel.applyNoisyGate(noisy, cast(size_t)0, hGate, config.singleQubitError);
+        
+        // Noisy CNOT
+        NoiseModel.applyNoisyCNOT(noisy, cast(size_t)0, cast(size_t)1, config.twoQubitError);
+        
+        // Measure with readout error
+        bool q0 = noisy.measure(0);
+        bool q1 = noisy.measure(1);
+        q0 = NoiseModel.applyReadoutError(q0, config.readoutError);
+        q1 = NoiseModel.applyReadoutError(q1, config.readoutError);
+        
+        size_t result = (q1 ? 2 : 0) + (q0 ? 1 : 0);
+        counts[result]++;
+    }
+    
+    writefln!"  |00>: %d/%d (%.1f%%)"(counts[0], SHOTS, 100.0*counts[0]/SHOTS);
+    writefln!"  |01>: %d/%d (%.1f%%)"(counts[1], SHOTS, 100.0*counts[1]/SHOTS);
+    writefln!"  |10>: %d/%d (%.1f%%)"(counts[2], SHOTS, 100.0*counts[2]/SHOTS);
+    writefln!"  |11>: %d/%d (%.1f%%)"(counts[3], SHOTS, 100.0*counts[3]/SHOTS);
+    
+    real fidelity = cast(real)(counts[0] + counts[3]) / SHOTS;
+    writefln!"\n  Bell state fidelity: %.1f%% (ideal: 100%%)"(fidelity * 100);
+}
