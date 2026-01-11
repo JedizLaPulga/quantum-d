@@ -59,9 +59,8 @@ struct QRegister(ulong N) {
         foreach (i; 0 .. (1 << N)) {
             if (((i >> qubit) & 1) == 0) p0 += prob(i);
         }
-            import std.random : MinstdRand0, uniform01;
-        auto rnd = MinstdRand0(42);
-        bool result = uniform01!real(rnd) < p0;
+        import std.random : uniform01, rndGen;
+        bool result = uniform01!real(rndGen) >= p0;  // true = |1⟩, false = |0⟩
 
         foreach (i; 0 .. (1 << N)) {
             if (((i >> qubit) & 1) != (result ? 1 : 0)) {
