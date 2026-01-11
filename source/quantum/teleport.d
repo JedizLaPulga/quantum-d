@@ -26,10 +26,12 @@ class QuantumTeleport {
         writeln("=== QUANTUM TELEPORTATION (with your Qubit) ===");
         psi.print();
 
-        // Build |ψ⟩|00⟩ = α|000⟩ + β|100⟩
+        // Build |ψ⟩|00⟩ = α|000⟩ + β|001⟩
+        // Qubit ordering: q0 = Alice's qubit (to teleport), q1 = ancilla, q2 = Bob's qubit
+        // Index bit 0 (value 1) = q0, bit 1 (value 2) = q1, bit 2 (value 4) = q2
         C[8] init = [C(0), C(0), C(0), C(0), C(0), C(0), C(0), C(0)];
-        init[0] = psi.alpha;  // |000⟩
-        init[4] = psi.beta;   // |100⟩
+        init[0] = psi.alpha;  // |000⟩ (q0=0)
+        init[1] = psi.beta;   // |001⟩ (q0=1)
 
         auto tele = new QuantumTeleport(QRegister!3(init));
 
