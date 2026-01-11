@@ -2,6 +2,7 @@ import quantum.qubit;
 import quantum.register;
 import quantum.qasm;
 import quantum.teleport;
+import quantum.common : C;
 
 void main()
 {
