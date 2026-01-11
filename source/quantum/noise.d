@@ -65,7 +65,7 @@ struct NoiseModel {
         reg = Quantum register
         p = Error probability per qubit
     +/
-    static void applyDepolarizingAll(N)(ref QRegister!N reg, real p) {
+    static void applyDepolarizingAll(ulong N)(ref QRegister!N reg, real p) {
         foreach (q; 0 .. N) {
             applyDepolarizing(reg, q, p);
         }
@@ -85,7 +85,7 @@ struct NoiseModel {
         qubit = Target qubit index
         p = Flip probability
     +/
-    static void applyBitFlip(N)(ref QRegister!N reg, size_t qubit, real p) {
+    static void applyBitFlip(ulong N)(ref QRegister!N reg, size_t qubit, real p) {
         if (uniform01!real(rndGen) < p) {
             reg.applyGate(qubit, Gates.X);
         }
@@ -105,7 +105,7 @@ struct NoiseModel {
         qubit = Target qubit index
         p = Flip probability
     +/
-    static void applyPhaseFlip(N)(ref QRegister!N reg, size_t qubit, real p) {
+    static void applyPhaseFlip(ulong N)(ref QRegister!N reg, size_t qubit, real p) {
         if (uniform01!real(rndGen) < p) {
             reg.applyGate(qubit, Gates.Z);
         }
@@ -129,7 +129,7 @@ struct NoiseModel {
         qubit = Target qubit index
         gamma = Damping parameter (0 to 1)
     +/
-    static void applyAmplitudeDamping(N)(ref QRegister!N reg, size_t qubit, real gamma) {
+    static void applyAmplitudeDamping(ulong N)(ref QRegister!N reg, size_t qubit, real gamma) {
         enum size_t NUM_STATES = 1 << N;
         size_t qbit = 1UL << qubit;
         
@@ -180,7 +180,7 @@ struct NoiseModel {
         qubit = Target qubit index
         gamma = Dephasing parameter (0 to 1)
     +/
-    static void applyPhaseDamping(N)(ref QRegister!N reg, size_t qubit, real gamma) {
+    static void applyPhaseDamping(ulong N)(ref QRegister!N reg, size_t qubit, real gamma) {
         // Phase damping reduces coherence between |0> and |1>
         // Implemented as random phase kick
         if (uniform01!real(rndGen) < gamma) {
@@ -225,7 +225,7 @@ struct NoiseModel {
         gate = Gate to apply
         errorRate = Probability of error after gate
     +/
-    static void applyNoisyGate(N)(ref QRegister!N reg, size_t qubit, 
+    static void applyNoisyGate(ulong N)(ref QRegister!N reg, size_t qubit, 
                                    C[2][2] gate, real errorRate) {
         reg.applyGate(qubit, gate);
         applyDepolarizing(reg, qubit, errorRate);
@@ -240,7 +240,7 @@ struct NoiseModel {
         target = Target qubit
         errorRate = Probability of error after gate
     +/
-    static void applyNoisyCNOT(N)(ref QRegister!N reg, size_t control, 
+    static void applyNoisyCNOT(ulong N)(ref QRegister!N reg, size_t control, 
                                    size_t target, real errorRate) {
         reg.applyCNOT(control, target);
         applyDepolarizing(reg, control, errorRate);
