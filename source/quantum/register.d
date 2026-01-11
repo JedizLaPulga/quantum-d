@@ -11,7 +11,7 @@ struct QRegister(ulong N) {
     C[1 << N] state;
 
     this(C[] init) {
-        assert(init.length == (1 << N));
+        enforce(init.length == (1 << N), "Initial state must have 2^N amplitudes");
         foreach (i, amp; init) state[i] = amp;
         normalize();
     }
