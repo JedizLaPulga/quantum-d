@@ -5,6 +5,7 @@ import quantum.teleport;
 import quantum.ghz;
 import quantum.gates;
 import quantum.grover;
+import quantum.noise;
 import quantum.common : C, absSq;
 import std.math;
 import std.stdio;
@@ -42,6 +43,9 @@ void main()
     // Algorithm tests
     total++; if (testGroverSearch()) passed++;
     
+    // Noise model tests
+    total++; if (testNoiseModels()) passed++;
+    
     writeln("\n========================================");
     writefln!"  RESULTS: %d/%d tests passed"(passed, total);
     writeln("========================================");
@@ -57,6 +61,12 @@ void main()
     writeln("========================================\n");
     
     Grover!3.search(5, true);  // Search for 5 in 8 items
+    
+    writeln("\n\n========================================");
+    writeln("     NOISE MODEL DEMO");
+    writeln("========================================\n");
+    
+    demoNoiseModels();
     
     writeln("\n\n========================================");
     writeln("     TELEPORTATION DEMO");
